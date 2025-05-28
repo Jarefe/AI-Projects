@@ -1,6 +1,13 @@
+import os
+
 import cv2
 import pytesseract
 from matplotlib import pyplot as plt
+from dotenv import load_dotenv
+
+load_dotenv()
+
+pytesseract.pytesseract.tesseract_cmd = os.getenv('TESSERACT_PATH')
 
 # Read image using OpenCV (BGR format by default)
 image = cv2.imread('sample.jpg')
@@ -32,21 +39,20 @@ plt.show()
 extracted_text = pytesseract.image_to_string(image_rgb)
 print(f'Extracted Text:\n{extracted_text}')
 
-# Below code does not function without tesseract installed
-# # Draw bounding boxes around detected text
-#
-# data = pytesseract.image_to_data(image_rgb, output_type=pytesseract.Output.DICT)
-#
-# n_boxes = len(data['level'])
-# for i in range(n_boxes):
-#     (x,y,w,h) = (data['left'][i], data['top'][i], data['width'][i],data['height'][i])
-#     cv2.rectangle(image_rgb, (x, y), (x+w, y+h), (255,0,0), 2)
-#
-#
-# # Show image with bounding boxes
-#
-# plt.figure(figsize=(10, 6))
-# plt.imshow(image_rgb)
-# plt.title("Image with Text Bounding Boxes")
-# plt.axis("off")
-# plt.show()
+# Draw bounding boxes around detected text
+
+data = pytesseract.image_to_data(image_rgb, output_type=pytesseract.Output.DICT)
+
+n_boxes = len(data['level'])
+for i in range(n_boxes):
+    (x,y,w,h) = (data['left'][i], data['top'][i], data['width'][i],data['height'][i])
+    cv2.rectangle(image_rgb, (x, y), (x+w, y+h), (255,0,0), 2)
+
+
+# Show image with bounding boxes
+
+plt.figure(figsize=(10, 6))
+plt.imshow(image_rgb)
+plt.title("Image with Text Bounding Boxes")
+plt.axis("off")
+plt.show()
